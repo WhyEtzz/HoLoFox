@@ -427,6 +427,7 @@ conn.sendMessage(id, 'ulangi dengan  !pict cewek/cowok/kucing\n\nMisal: !pict co
                 await aruga.reply(from, `Tidak ada gambar! Untuk menggunakan ${prefix}sticker\n\n\nKirim gambar dengan caption\n${prefix}sticker <biasa>\n${prefix}sticker nobg <tanpa background>\n\natau Kirim pesan dengan\n${prefix}sticker <link_gambar>`, id)
             }
             break
+        }
       if (is == '!pantun')
       {
 
@@ -753,7 +754,7 @@ if (text.includes("!alay")){
     });
 
 }
-   }})
+   })
 //done'
 
 
