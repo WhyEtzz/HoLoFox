@@ -391,29 +391,43 @@ conn.sendMessage(id, info.info(id, BotName, corohelp, tampilTanggal, tampilWaktu
 else if (text == '!pict'){
 conn.sendMessage(id, 'ulangi dengan  !pict cewek/cowok/kucing\n\nMisal: !pict cowok' ,MessageType.text);
 }
- if (messageType == imageMessage)
-   {
-      let caption = imageMessage.caption.toLocaleLowerCase()
-      const buffer = await conn.downloadMediaMessage(m) // to decrypt & use as a buffer
-      if (caption.includes == '!sticker')
-      {b
-         const stiker = await conn.downloadAndSaveMediaMessage(m) // to decrypt & save to file
-
-         const
-         {
-            exec
-         } = require("child_process");
-         exec('cwebp -q 50 ' + stiker + ' -o temp/' + jam + '.webp', (error, stdout, stderr) =>
-         {
-            let stik = fs.readFileSync('temp/' + jam + '.webp')
-            conn.sendMessage(id, stik, MessageType.sticker)
-         });
-      }
-   }
-   if (messageType === MessageType.text)
-   {
-      let is = m.message.conversation.toLocaleLowerCase()
-
+       case 'sticker':
+        case 'stiker':
+            if ((isMedia || isQuotedImage) && args.length === 0) {
+                const encryptMedia = isQuotedImage ? quotedMsg : message
+                const _mimetype = isQuotedImage ? quotedMsg.mimetype : mimetype
+                const mediaData = await decryptMedia(encryptMedia, uaOverride)
+                const imageBase64 = `data:${_mimetype};base64,${mediaData.toString('base64')}`
+                aruga.sendImageAsSticker(from, imageBase64)
+                .then(() => {
+                    aruga.reply(from, 'Here\'s your sticker')
+                    console.log(`Sticker Processed for ${processTime(t, moment())} Second`)
+                })
+            } else if (args[0] === 'nobg') {
+                if (isMedia || isQuotedImage) {
+                    try {
+                    var mediaData = await decryptMedia(message, uaOverride)
+                    var imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
+                    var base64img = imageBase64
+                    var outFile = './media/noBg.png'
+		            // kamu dapat mengambil api key dari website remove.bg dan ubahnya difolder settings/api.json
+                    var result = await removeBackgroundFromImageBase64({ base64img, apiKey: apiNoBg, size: 'auto', type: 'auto', outFile })
+                    await fs.writeFile(outFile, result.base64img)
+                    await aruga.sendImageAsSticker(from, `data:${mimetype};base64,${result.base64img}`)
+                    } catch(err) {
+                    console.log(err)
+	   	            await aruga.reply(from, 'Maaf batas penggunaan hari ini sudah mencapai maksimal', id)
+                    }
+                }
+            } else if (args.length === 1) {
+                if (!isUrl(url)) { await aruga.reply(from, 'Maaf, link yang kamu kirim tidak valid.', id) }
+                aruga.sendStickerfromUrl(from, url).then((r) => (!r && r !== undefined)
+                    ? aruga.sendText(from, 'Maaf, link yang kamu kirim tidak memuat gambar.')
+                    : aruga.reply(from, 'Here\'s your sticker')).then(() => console.log(`Sticker Processed for ${processTime(t, moment())} Second`))
+            } else {
+                await aruga.reply(from, `Tidak ada gambar! Untuk menggunakan ${prefix}sticker\n\n\nKirim gambar dengan caption\n${prefix}sticker <biasa>\n${prefix}sticker nobg <tanpa background>\n\natau Kirim pesan dengan\n${prefix}sticker <link_gambar>`, id)
+            }
+            break
       if (is == '!pantun')
       {
 
